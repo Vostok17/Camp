@@ -26,7 +26,7 @@ List<Product> products = new List<Product>
 
 #endregion
 
-#region Busket (Add, Remove)
+#region Buy (Add, Remove)
 
 Buy basket = new Buy(apple, banana);
 basket.Add(products);
@@ -41,8 +41,11 @@ Console.WriteLine(basket);
 
 #endregion
 
-Check check = new Check(basket);
+#region Check
 
-check.DisplayInfo();
+Check check = new Check(basket);
+Console.WriteLine(check);
+
+#endregion
 
 Console.ReadKey();

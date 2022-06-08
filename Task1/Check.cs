@@ -8,59 +8,95 @@ namespace Task1
 {
     internal class Check
     {
+        #region Fields
+
         private readonly Buy _buy;
-        private int _tableWidth;
+        private StringBuilder _check;
+
+        private readonly int _tableWidth;
+        private readonly int _columnWidth;
+        private bool _isEnoughSpace;
+
+        #endregion
+
+        #region Ctors
 
         public Check() { }
         public Check(Buy buy) : this(buy, 100) { }
         public Check(Buy buy, int tableWidth)
         {
             _buy = buy;
-            _tableWidth = FixTableWidth(tableWidth);
+            _check = new StringBuilder();
+
+            (_columnWidth, _tableWidth) = CalculateWidth(tableWidth);
+            _isEnoughSpace = true;
+
+            BuildTable();
+
+            if (!_isEnoughSpace)
+            {
+                _check.Clear();
+                int additionalSpace = 2 * DetermineNumberOfColumns();
+                _check.Append(new Check(buy, _tableWidth + additionalSpace).ToString());
+            }            
         }
-
-        #region Object methods
-
-
 
         #endregion
 
+        #region Object methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Check other)
+            {
+                return ToString() == other.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+        public override string ToString()
+        {
+            return _check.ToString();
+        }
+
+        #endregion
 
         #region Methods
 
-        public void DisplayInfo()
+        public void BuildTable()
         {
             PrintSeparator();
 
-            PrintRow("Id", "Name", "Price", "Weight");
+            PrintRow("Id", "Name", "Price", "Weight", "Count");
 
             foreach (var item in _buy)
             {
                 var (id, name, price, weight) = item.product;
 
-                PrintRow(id, name, price, weight);
+                PrintRow(id, name, price, weight, item.count);
             }
         }
 
-        private void PrintRow(params object[] args)
+        private void PrintRow(params object[] objs)
         {
-            string[] columns = args.Select(x => x.ToString()).ToArray();
+            string[] columns = objs.Select(x => x.ToString()).ToArray();
 
-            int colWidth = (_tableWidth - columns.Length - 1) / columns.Length;
-
-            var row = new StringBuilder("|");
+            _check.Append("|");
             foreach (string col in columns)
             {
-                row.Append(Center(col, colWidth));
-                row.Append("|");
+                _check.Append(Center(col, _columnWidth));
+                _check.Append("|");
             }
+            _check.AppendLine();
 
-            Console.WriteLine(row.ToString());
             PrintSeparator();
         }
         private void PrintSeparator()
         {
-            Console.WriteLine(new string('-', _tableWidth));
+            _check.AppendLine(new string('-', _tableWidth));
         }
         private string Center(string text, int width)
         {
@@ -71,6 +107,7 @@ namespace Task1
 
             if (text.Length > width)
             {
+                _isEnoughSpace = false;
                 return text.Substring(0, width);
             }
             else
@@ -81,10 +118,12 @@ namespace Task1
 
         private int DetermineNumberOfColumns()
         {
-            return typeof(Product).GetProperties().Length;
-        }
+            int colsForProps = typeof(Product).GetProperties().Length;
+            int colForCount = 1;
 
-        private int FixTableWidth(int tableWidth)
+            return colForCount + colsForProps;
+        }
+        private (int ColWidth, int TableWidth) CalculateWidth(int tableWidth)
         {
             int numOfCols = DetermineNumberOfColumns();
 
@@ -92,14 +131,11 @@ namespace Task1
             int colWidth = (int)Math.Ceiling((double)(tableWidth - numOfCols - 1) / numOfCols);
 
             // Increase table width to accommodate column length.
-            int fixedWidth = numOfCols + 1 + colWidth * numOfCols;
+            int fixedTableWidth = numOfCols + 1 + colWidth * numOfCols;
 
-            return fixedWidth;
+            return (colWidth, fixedTableWidth);
         }
 
         #endregion
-
-
-
     }
 }
