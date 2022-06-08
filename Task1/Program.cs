@@ -1,12 +1,25 @@
 ﻿using Task1;
 
-Product apple = new Product(name: "Apple", price: 12.50m, weight: 0.725);
-Product banana = new Product("Banana", 47m, 0.55);
-Product milk = new Product("Milk", 36m, 1);
+Product apple = new Product
+{
+    Id = 0,
+    Name = "Red apple",
+    Price = 12.5m,
+    Weight = 3
+};
 
-Buy basket = new Buy(apple, banana);
-basket.Add(apple, banana, milk);
+Product banana = new Product(1, "Yellow banana", price: 24m, weight: 1);
 
-Check.DisplayInfo(basket);
+Product orange = new Product(1, "Orange orange :D", price: 34.5m, weight: 0.5)
+{
+    Id = 2
+};
+
+
+
+//Buy basket = new Buy(apple, banana);
+//basket.Add(apple, banana, milk);
+
+//Check.DisplayInfo(basket);
 
 Console.ReadKey();

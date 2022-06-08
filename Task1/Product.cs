@@ -9,16 +9,19 @@ namespace Task1
 {
     internal class Product
     {
-        public string Name { get; }
+        #region Fields and props
+
+        public int Id { get; init; }
+        public string Name { get; init; }
 
         private decimal _price;
         public decimal Price
         {
             get { return _price; }
-            private set
+            init
             {
-                if (value < 0)
-                    throw new ArgumentException("Price must be a positive value.");
+                if (value <= 0)
+                    throw new ArgumentException("Price must be greater than zero.");
                 _price = value;
             }
         }
@@ -29,15 +32,19 @@ namespace Task1
             get { return _weight; }
             set
             {
-                if (value < 0)
-                    throw new ArgumentException("Weight must be a positive number");
+                if (value <= 0)
+                    throw new ArgumentException("Weight must be greater than zero.");
                 _weight = value;
             }
         }
 
-        public Product() : this("Undefined", 0, 0) { }
-        public Product(string name, decimal price, double weight)
+        #endregion
+
+
+        public Product() : this(234, "Undefined", 1, 1) { }
+        public Product(int id, string name, decimal price, double weight)
         {
+            Id = id;
             Name = name;
             Price = price;
             Weight = weight;
@@ -45,7 +52,7 @@ namespace Task1
 
         public override string ToString()
         {
-            return string.Format($"Name: {Name,-10}| Cost: {Price,-10}| Weight: {Weight,-10}");
+            return $"Id: {Id}, Name: {Name}, Price: {Price}, Weight: {Weight}.";
         }
 
         /// <summary>
