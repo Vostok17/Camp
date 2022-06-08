@@ -1,5 +1,7 @@
 ﻿using Task1;
 
+#region Create Product instances
+
 Product apple = new Product
 {
     Id = 0,
@@ -15,16 +17,30 @@ Product orange = new Product(1, "Orange orange :D", price: 34.5m, weight: 0.5)
     Id = 2
 };
 
-Product test = new Product();
-Console.WriteLine(test);
+List<Product> products = new List<Product>
+{
+    apple,
+    banana
+};
 
-var (id, name, price, weight) = test;
+#endregion
 
-Console.WriteLine(id+name+price+weight);
+#region Busket (Add, Remove)
+
+Buy basket = new Buy(apple, banana);
+basket.Add(products);
+basket.Add(orange);
+
+Console.WriteLine(basket);
+
+basket.Remove(0, 1);
+basket.Remove(2, 2);
+
+Console.WriteLine(basket);
+
+#endregion
 
 
-//Buy basket = new Buy(apple, banana);
-//basket.Add(apple, banana, milk);
 
 //Check.DisplayInfo(basket);
 
