@@ -15,6 +15,8 @@ Product orange = new Product(1, "Orange orange :D", price: 34.5m, weight: 0.5)
     Id = 2
 };
 
+Product test = new Product();
+Console.WriteLine(test);
 
 
 //Buy basket = new Buy(apple, banana);

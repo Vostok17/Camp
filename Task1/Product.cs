@@ -11,7 +11,7 @@ namespace Task1
     {
         #region Fields and props
 
-        public int Id { get; init; }
+        public int? Id { get; init; }
         public string Name { get; init; }
 
         private decimal _price;
@@ -40,8 +40,7 @@ namespace Task1
 
         #endregion
 
-
-        public Product() : this(234, "Undefined", 1, 1) { }
+        public Product() { }
         public Product(int id, string name, decimal price, double weight)
         {
             Id = id;
@@ -50,13 +49,15 @@ namespace Task1
             Weight = weight;
         }
 
+        #region Object methods
+
         public override string ToString()
         {
             return $"Id: {Id}, Name: {Name}, Price: {Price}, Weight: {Weight}.";
         }
 
         /// <summary>
-        /// Products are equal when they have the same name.
+        /// Products are equal when they have the same Id.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -64,16 +65,16 @@ namespace Task1
         {
             if (obj is Product other)
             {
-                return Name == other.Name;
+                return Id == other.Id;
             }
             return false;
         }
-
         public override int GetHashCode() => Name.GetHashCode();
+
+        #endregion
 
         public static bool operator ==(Product p1, Product p2)
             => p1.Equals(p2);
-
         public static bool operator !=(Product p1, Product p2)
             => !p1.Equals(p2);
     }
