@@ -12,12 +12,44 @@ namespace Task1
         private int _totalCount = 0;
 
         public Buy() { }
-        public Buy(List<Product> list) => Add(list.ToArray());
+        public Buy(List<Product> list) : this(list.ToArray()) { }
         public Buy(params Product[] products) => Add(products);
+
+        #region Object methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Buy other)
+            {
+                return ToString() == other.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("Buy contains {0} items:", _totalCount);
+            sb.AppendLine();
+
+            foreach (var p in _basket)
+            {
+                sb.Append($"{p.Count} - {p.Product}");
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        #endregion
+
+        #region Methods
 
         public decimal TotalCost() => _basket.Sum(x => x.Count * x.Product.Price);
         public double TotalWeight() => _basket.Sum(x => x.Count * x.Product.Weight);
-        public List<(Product Product, int Count)> GetListOfProducts() => _basket;
+        public List<(Product Product, int Count)> GetListOfProducts() => _basket.ToList();
         public void Add(params Product[] products)
         {
             foreach (Product product in products)
@@ -60,19 +92,12 @@ namespace Task1
                 }
             }
         }
-        public void Clear() => _basket.Clear();
-        public override string ToString()
+        public void Clear()
         {
-            var sb = new StringBuilder();
-            sb.AppendFormat("Buy contains {0} items:", _totalCount);
-            sb.AppendLine();
-
-            foreach (var p in _basket)
-            {
-                sb.Append($"{p.Count} - {p.Product}");
-                sb.AppendLine();
-            }
-            return sb.ToString();
+            _basket.Clear();
+            _totalCount = 0;
         }
+
+        #endregion
     }
 }

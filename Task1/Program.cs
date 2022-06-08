@@ -40,8 +40,6 @@ Console.WriteLine(basket);
 
 #endregion
 
-
-
 //Check.DisplayInfo(basket);
 
 Console.ReadKey();
