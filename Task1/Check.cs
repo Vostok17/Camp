@@ -9,25 +9,97 @@ namespace Task1
     internal class Check
     {
         private readonly Buy _buy;
+        private int _tableWidth;
 
         public Check() { }
-        public Check(Buy buy)
+        public Check(Buy buy) : this(buy, 100) { }
+        public Check(Buy buy, int tableWidth)
         {
             _buy = buy;
+            _tableWidth = FixTableWidth(tableWidth);
         }
 
-        public void DisplayInfo(Buy basket)
+        #region Object methods
+
+
+
+        #endregion
+
+
+        #region Methods
+
+        public void DisplayInfo()
         {
-            foreach (var prod in basket.GetListOfProducts())
-            {
-                string formatedStr = string.Format($"{prod.Product}| Count: {prod.Count,-2}");
-                Console.WriteLine(new string('-', formatedStr.Length));
-                Console.WriteLine(formatedStr);
-            }
-            Console.WriteLine();
+            PrintSeparator();
 
-            Console.WriteLine("Total cost: {0:f2}", basket.TotalCost());
-            Console.WriteLine("Total weight: {0:f2}", basket.TotalWeight());
+            PrintRow("Id", "Name", "Price", "Weight");
+
+            foreach (var item in _buy)
+            {
+                var (id, name, price, weight) = item.product;
+
+                PrintRow(id, name, price, weight);
+            }
         }
+
+        private void PrintRow(params object[] args)
+        {
+            string[] columns = args.Select(x => x.ToString()).ToArray();
+
+            int colWidth = (_tableWidth - columns.Length - 1) / columns.Length;
+
+            var row = new StringBuilder("|");
+            foreach (string col in columns)
+            {
+                row.Append(Center(col, colWidth));
+                row.Append("|");
+            }
+
+            Console.WriteLine(row.ToString());
+            PrintSeparator();
+        }
+        private void PrintSeparator()
+        {
+            Console.WriteLine(new string('-', _tableWidth));
+        }
+        private string Center(string text, int width)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return new string('-', width);
+            }
+
+            if (text.Length > width)
+            {
+                return text.Substring(0, width);
+            }
+            else
+            {
+                return text.PadLeft(text.Length + (width - text.Length) / 2).PadRight(width);
+            }
+        }
+
+        private int DetermineNumberOfColumns()
+        {
+            return typeof(Product).GetProperties().Length;
+        }
+
+        private int FixTableWidth(int tableWidth)
+        {
+            int numOfCols = DetermineNumberOfColumns();
+
+            // Calculate column width.
+            int colWidth = (int)Math.Ceiling((double)(tableWidth - numOfCols - 1) / numOfCols);
+
+            // Increase table width to accommodate column length.
+            int fixedWidth = numOfCols + 1 + colWidth * numOfCols;
+
+            return fixedWidth;
+        }
+
+        #endregion
+
+
+
     }
 }

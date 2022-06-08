@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    internal class Buy
+    internal class Buy : IEnumerable<(Product product, int count)>
     {
         private List<(Product Product, int Count)> _basket = new();
         private int _totalCount = 0;
+        private string[] arr = null;
 
         public Buy() { }
         public Buy(List<Product> list) : this(list.ToArray()) { }
@@ -96,6 +98,15 @@ namespace Task1
         {
             _basket.Clear();
             _totalCount = 0;
+        }
+
+        IEnumerator<(Product product, int count)> IEnumerable<(Product product, int count)>.GetEnumerator()
+        {
+            return _basket.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _basket.GetEnumerator();   
         }
 
         #endregion

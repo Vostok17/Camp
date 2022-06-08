@@ -1,4 +1,5 @@
-﻿using Task1;
+﻿using System.Runtime.CompilerServices;
+using Task1;
 
 #region Create Product instances
 
@@ -40,6 +41,8 @@ Console.WriteLine(basket);
 
 #endregion
 
-//Check.DisplayInfo(basket);
+Check check = new Check(basket);
+
+check.DisplayInfo();
 
 Console.ReadKey();
