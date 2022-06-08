@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    internal static class Check
+    internal class Check
     {
-        public static void DisplayInfo(Buy basket)
+        private readonly Buy _buy;
+
+        public Check() { }
+        public Check(Buy buy)
+        {
+            _buy = buy;
+        }
+
+        public void DisplayInfo(Buy basket)
         {
             foreach (var prod in basket.GetListOfProducts())
             {
