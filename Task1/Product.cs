@@ -73,6 +73,15 @@ namespace Task1
 
         #endregion
 
+        public void Deconstruct(out int? id, out string name, out decimal price, 
+            out double weight)
+        {
+            id = Id;
+            name = Name;
+            price = _price;
+            weight = _weight;
+        }
+
         public static bool operator ==(Product p1, Product p2)
             => p1.Equals(p2);
         public static bool operator !=(Product p1, Product p2)
