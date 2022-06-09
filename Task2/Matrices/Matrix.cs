@@ -10,16 +10,24 @@ namespace Matrices
     {
         private int[,] _matrix;
 
-        public readonly int Rows;
-        public readonly int Cols;
+        public int Rows { get; init; }
+        public int Cols { get; init; }
 
+        #region Ctors
+
+        private Matrix() { }
         public Matrix(int n) : this(n, n) { }
-        public Matrix(int rows, int columns)
+        public Matrix(int rows, int columns) : this(rows, columns, null) { }
+        public Matrix(int rows, int columns, int[,] matrix)
         {
-            _matrix = new int[rows, columns];
+            _matrix = (matrix == null) ? new int[rows, columns] : matrix;
             Rows = rows;
             Cols = columns;
         }
+
+        #endregion
+
+        #region Methods
 
         public void VerticalSnake()
         {
@@ -53,6 +61,7 @@ namespace Matrices
 
             int k = 0,
                 maxValue = Rows * Cols;
+
             bool isRevert = false;
             for (int j = 0; j < Cols; j++)
             {
@@ -122,17 +131,37 @@ namespace Matrices
                 }
             }
         }
-        public void PrintMatrix()
+
+        #endregion
+
+        #region Object methods
+
+        public override bool Equals(object? obj)
         {
+            if (obj is Matrix m)
+            {
+                return ToString() == m.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
             for (int i = 0; i < Rows; i++)
             {
                 for (int j = 0; j < Cols; j++)
                 {
-                    Console.Write($"{_matrix[i, j], -3}");
+                    sb.Append($"{_matrix[i, j],-3}");
                 }
-                Console.WriteLine();
+                sb.AppendLine();
             }
-            Console.WriteLine();
+            return sb.Length == 0 ? "Empty matrix." : sb.ToString();
         }
+
+        #endregion
     }
 }
