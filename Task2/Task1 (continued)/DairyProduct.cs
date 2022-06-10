@@ -8,40 +8,33 @@ namespace Task2
 {
     internal class DairyProduct : Product
     {
-        public readonly int expirationTermInDays;
+        public int ExpirationTermInDays { get; init; }
 
         public DairyProduct()
         {
-            expirationTermInDays = 0;
+            ExpirationTermInDays = 0;
         }
 
-        public DairyProduct(string name, decimal price, double weight, int expirationTermInDays)
-            : base(name, price, weight)
+        public DairyProduct(int id, string name, decimal price, double weight, int expirationTermInDays)
+            : base(id, name, price, weight)
         {
-            this.expirationTermInDays = expirationTermInDays > 0 ? expirationTermInDays : 0;
+            ExpirationTermInDays = expirationTermInDays;
         }
 
         public override void ChangePrice(double percentage)
         {
-            switch (expirationTermInDays)
+            percentage += ExpirationTermInDays switch
             {
-                case < 20:
-                    percentage += 15;
-                    break;
-                case < 30:
-                    percentage += 10;
-                    break;
-                case < 60:
-                    percentage += 5;
-                    break;
-                default:
-                    break;
-            }
+                < 20 => 15,
+                < 30 => 10,
+                < 60 => 5,
+                _ => 0
+            };
             base.ChangePrice(percentage);
         }
         public override string ToString()
         {
-            return string.Format($"{base.ToString()}| Expiration term: {expirationTermInDays} days");
+            return $"{base.ToString().TrimEnd('.')}, Expiration term: {ExpirationTermInDays}.";
         }
     }
 }
