@@ -12,32 +12,28 @@ namespace Task2
         public MeatTypeEnum? MeatType { get; init; }
 
         public Meat() { }
-        public Meat(string name, decimal price, double weight, 
+        public Meat(int id, string name, decimal price, double weight,
             MeatGradeEnum meatGrade, MeatTypeEnum meatType)
-            : base(name, price, weight)
+            : base(id, name, price, weight)
         {
             MeatType = meatType;
             MeatGrade = meatGrade;
         }
 
-        public override void ChangePrice(double percentage)
-        {
-            switch (MeatGrade)
-            {
-                case MeatGradeEnum.FirstGrade:
-                    percentage += 25;
-                    break;
-                case MeatGradeEnum.SecondGrade:
-                    percentage += 10;
-                    break;
-                default:
-                    break;
-            }
-            base.ChangePrice(percentage);
-        }
         public override string ToString()
         {
-            return string.Format($"{base.ToString()}| Grade: {MeatGrade,-13}| Type: {MeatType,-10}");
+            return $"{base.ToString().TrimEnd('.')}, Grade: {MeatGrade}, Type: {MeatType}.";
+        }
+
+        public override void ChangePrice(double percentage)
+        {
+            percentage += MeatGrade switch
+            {
+                MeatGradeEnum.FirstGrade => 25,
+                MeatGradeEnum.SecondGrade => 10,
+                _ => 0,
+            };
+            base.ChangePrice(percentage);
         }
     }
 }
