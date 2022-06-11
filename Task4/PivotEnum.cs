@@ -5,6 +5,7 @@
         FirstElement,
         LastElement,
         MiddleElement,
-        Random
+        Random,
+        MedianOfThree
     }
 }

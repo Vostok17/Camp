@@ -157,6 +157,7 @@ namespace Task4
                 PivotEnum.FirstElement => v[start],
                 PivotEnum.MiddleElement => v[(start + end) / 2],
                 PivotEnum.Random => v[new Random().Next(start, end + 1)],
+                PivotEnum.MedianOfThree => MedianOfThree(v, start, (end - start) / 2, end),
                 _ => throw new NotImplementedException("Invalid option in pivot enum.")
             };
 
@@ -225,6 +226,13 @@ namespace Task4
                 int b = QuickSelect(v, 0, length - 1, length / 2 - 1);
                 return (a + b) / 2;
             }
+        }
+        private static int MedianOfThree(Vector v, int first, int middle, int last)
+        {
+            int[] arr = new int[] { v[first], v[middle], v[last] };
+            Array.Sort(arr);
+
+            return arr[1];
         }
 
         #endregion
