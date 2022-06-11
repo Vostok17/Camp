@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Task2;
+﻿using Task2;
 
 #region Create Product instances
 
@@ -48,55 +47,40 @@ Console.WriteLine(check);
 
 #endregion
 
-Meat mutton = new Meat("Mutton", 10m, 2.25, MeatGradeEnum.FirstGrade, MeatTypeEnum.Mutton);
-Meat veal = new Meat()
+#region Storage methods
+
+var prods = new List<(Product, int)>
 {
-    MeatType = MeatTypeEnum.Veal
+    (new Product(0, "Some Product", 12m, 0.750), 1),
+    (new Meat(1, "Some Veal", 200m, 1, MeatGradeEnum.FirstGrade, MeatTypeEnum.Veal), 5),
+    (new DairyProduct(2, "Milk", 36m, 0.900, 12), 2)
 };
 
-Console.WriteLine("\nBefore the change: {0}", mutton.Price);
-mutton.ChangePrice(10);
-Console.WriteLine("After the change: {0}", mutton.Price);
+Storage storage = new Storage(prods);
+Console.WriteLine(storage);
 
-DairyProduct sourcream = new DairyProduct("Sourcream", 10m, 0.50, 33);
+// 'Some Veal' price is 200, +10% + 25% (because of FirstGrade) -> 270
+// 'Milk' price is 36, +10% +15% (because term < 20) -> 45
+storage.ChangePrices(10);
+Console.WriteLine(storage);
 
-Console.WriteLine("\nBefore the change: {0}", sourcream.Price);
-sourcream.ChangePrice(10);
-Console.WriteLine("After the change: {0}", sourcream.Price);
+var meatProds = storage.FindAllMeatProducts();
 
-Storage storage = new Storage();
+Console.WriteLine("Meat products is storage: ");
+foreach (var item in meatProds)
+{
+    Console.WriteLine($"{item.Count} - {item.Meat}");
+}
+Console.WriteLine();
+
+#endregion
+
+#region User's input
+
 storage.AddProducts();
 
-Console.WriteLine(storage.ToString());
-storage.PrintAll();
+Console.WriteLine(storage);
 
-List<Product> exampleList = new List<Product>()
-{
-    new Product(),
-    new Meat(),
-    new DairyProduct()
-};
-Storage anotherStorage = new Storage(exampleList);
-
-Console.WriteLine(anotherStorage.ToString());
-anotherStorage.PrintAll();
-
-Console.WriteLine("Types in storage:");
-for (int i = 0; i < storage.Capasity; i++)
-{
-    Console.WriteLine($"{storage[i].Name} - {storage[i].GetType().Name}");
-}
-Console.WriteLine();
-
-List<Meat> meatProducts = storage.FindAllMeatProducts();
-Console.WriteLine("Meat products:");
-foreach (Meat meat in meatProducts)
-{
-    Console.WriteLine(meat.ToString());
-}
-Console.WriteLine();
-
-storage.ChangePrices(10);
-storage.PrintAll();
+#endregion
 
 Console.ReadKey();
