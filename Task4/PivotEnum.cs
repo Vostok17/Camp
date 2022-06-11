@@ -2,9 +2,9 @@
 {
     internal enum PivotEnum
     {
-        FirstElement,
-        LastElement,
-        MiddleElement,
+        First,
+        Last,
+        Middle,
         Random,
         MedianOfThree
     }

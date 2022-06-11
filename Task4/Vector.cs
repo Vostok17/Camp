@@ -9,7 +9,6 @@ namespace Task4
     internal class Vector
     {
         private int[] _array;
-        private static int high;
 
         public int Lenght => _array.Length;
 
@@ -145,27 +144,23 @@ namespace Task4
 
         #region Sort
 
-        public static void QuickSort(
-            Vector v, int start, int end, PivotEnum pivotEnum, OrderEnum orderEnum)
+        public static void QuickSort(Vector v, int start, int end, 
+            bool descending = false, PivotEnum pivotEnum = PivotEnum.Random)
         {
             if (start >= end)
                 return;
 
             int pivot = pivotEnum switch
             {
-                PivotEnum.LastElement => v[end],
-                PivotEnum.FirstElement => v[start],
-                PivotEnum.MiddleElement => v[(start + end) / 2],
+                PivotEnum.Last => v[end],
+                PivotEnum.First => v[start],
+                PivotEnum.Middle => v[(start + end) / 2],
                 PivotEnum.Random => v[new Random().Next(start, end + 1)],
                 PivotEnum.MedianOfThree => MedianOfThree(v, start, (end - start) / 2, end),
                 _ => throw new NotImplementedException("Invalid option in pivot enum.")
             };
 
-            int order = orderEnum switch
-            {
-                OrderEnum.Descending => -1,
-                _ => 1
-            };
+            int order = descending ? -1 : 1;
 
             int l = start, r = end;
 
@@ -182,8 +177,8 @@ namespace Task4
                 }
             } while (l <= r);
 
-            QuickSort(v, l, end, pivotEnum, orderEnum);
-            QuickSort(v, start, r, pivotEnum, orderEnum);
+            QuickSort(v, l, end, descending, pivotEnum);
+            QuickSort(v, start, r, descending, pivotEnum);
         }
 
         private static int Partition(Vector v, int start, int end)
