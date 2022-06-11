@@ -11,7 +11,6 @@ namespace Task2
     {
         private List<(Product Product, int Count)> _basket = new();
         private int _totalCount = 0;
-        private string[] arr = null;
 
         public Buy() { }
         public Buy(List<Product> list) : this(list.ToArray()) { }
