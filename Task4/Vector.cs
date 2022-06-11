@@ -9,46 +9,74 @@ namespace Task4
     internal class Vector
     {
         private int[] _array;
+        private static int high;
+
         public int Lenght => _array.Length;
 
-        public Vector(int[] arr)
-        {
-            _array = arr;
-        }
+        public Vector() { }
         public Vector(int n)
         {
             _array = new int[n];
         }
-        public Vector()
+        public Vector(int[] arr)
         {
-            _array = Array.Empty<int>();
+            _array = arr;
         }
 
         public int this[int index]
         {
-            get => _array[index];
-            set => _array[index] = value;
+            get
+            {
+                if (index < 0 || index >= _array.Length)
+                    throw new IndexOutOfRangeException(
+                        "Index must be greater than or equal to zero and less than lenght.");
+                return _array[index];
+            }
+            set
+            {
+                if (index < 0 || index >= _array.Length)
+                    throw new IndexOutOfRangeException(
+                        "Index must be greater than or equal to zero and less than lenght.");
+                _array[index] = value;
+            }
         }
 
+        #region Object methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Vector other)
+            {
+                return ToString() == other.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
         public override string ToString()
         {
             return string.Join(' ', _array);
         }
 
+        #endregion
+
+        #region Methods
+
         public void RandomInitialization(int min, int max)
         {
             Random random = new Random();
-            for (int i = 0; i < _array?.Length; i++)
+            for (int i = 0; i < _array.Length; i++)
             {
                 _array[i] = random.Next(min, max);
             }
         }
-
         public void InitShuffle()
         {
             for (int i = 0; i < _array.Length; i++)
             {
-                _array[i] = i + 1;
+                _array[i] = i;
             }
             Random random = new Random();
             _array = _array.OrderBy(x => random.Next()).ToArray();
@@ -62,7 +90,6 @@ namespace Task4
 
             return res;
         }
-
         public bool IsPalindrome()
         {
             bool isPalindrom = true;
@@ -78,9 +105,9 @@ namespace Task4
         }
         public void Reverse()
         {
-            int lenght = _array.Length / 2;
+            int lenght = _array.Length;
 
-            for (int i = 0; i < lenght; i++)
+            for (int i = 0; i < lenght / 2; i++)
             {
                 (_array[i], _array[lenght - 1 - i]) = (_array[lenght - 1 - i], _array[i]);
             }
@@ -114,34 +141,48 @@ namespace Task4
                 return "Every number occurs only once.";
         }
 
+        #endregion
+
         #region Sort
 
-        public static void QuickSort(Vector vec, int start, int end)
+        public static void QuickSort(
+            Vector v, int start, int end, PivotEnum pivotEnum, OrderEnum orderEnum)
         {
-            if (start < end)
-            {
-                int pivotIdx = Partition(vec, start, end);
-                
-                QuickSort(vec, start, pivotIdx - 1);
-                QuickSort(vec, pivotIdx + 1, end);
-            }
-        }
+            if (start >= end)
+                return;
 
-        private static int Partition(Vector vec, int start, int end)
-        {
-            int pivot = vec[end];
-            int i = start - 1;
-
-            for (int j = start; j < end; j++)
+            int pivot = pivotEnum switch
             {
-                if (vec[j] < pivot)
+                PivotEnum.LastElement => v[end],
+                PivotEnum.FirstElement => v[start],
+                PivotEnum.MiddleElement => v[(start + end) / 2],
+                PivotEnum.Random => v[new Random().Next(start, end + 1)],
+                _ => throw new NotImplementedException("Invalid option in pivot enum.")
+            };
+
+            int order = orderEnum switch
+            {
+                OrderEnum.Descending => -1,
+                _ => 1
+            };
+
+            int l = start, r = end;
+
+            do
+            {
+                while (order * v[l] < order * pivot) l++;
+                while (order * v[r] > order * pivot) r--;
+
+                if (l <= r)
                 {
-                    (vec[++i], vec[j]) = (vec[j], vec[i]);
+                    (v[l], v[r]) = (v[r], v[l]);
+                    l++;
+                    r--;
                 }
-            }
-            (vec[i + 1], vec[end]) = (vec[end], vec[i + 1]);
+            } while (l <= r);
 
-            return i + 1;
+            QuickSort(v, l, end, pivotEnum, orderEnum);
+            QuickSort(v, start, r, pivotEnum, orderEnum);
         }
 
         #endregion
