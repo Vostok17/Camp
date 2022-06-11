@@ -185,6 +185,48 @@ namespace Task4
             QuickSort(v, start, r, pivotEnum, orderEnum);
         }
 
+        private static int Partition(Vector v, int start, int end)
+        {
+            int pivot = v[end];
+            int i = start - 1;
+            for (int j = start; j < end; j++)
+            {
+                if (v[j] < pivot)
+                {
+                    i++;
+                    (v[j], v[i]) = (v[i], v[j]);
+                }
+            }
+            (v[i + 1], v[end]) = (v[end], v[i + 1]);
+            return i + 1;
+        }
+        private static int QuickSelect(Vector v, int start, int end, int k)
+        {
+            int idx = Partition(v, start, end);
+
+            if (idx == k)
+                return v[idx];
+            else if (idx < k)
+                return QuickSelect(v, idx + 1, end, k);
+            else
+                return QuickSelect(v, start, idx - 1, k);
+        }
+        public static int FindMedian(Vector v)
+        {
+            int length = v.Lenght;
+
+            if (length % 2 == 1)
+            {
+                return QuickSelect(v, 0, length - 1, length / 2);
+            }
+            else
+            {
+                int a = QuickSelect(v, 0, length - 1, length / 2);
+                int b = QuickSelect(v, 0, length - 1, length / 2 - 1);
+                return (a + b) / 2;
+            }
+        }
+
         #endregion
     }
 }

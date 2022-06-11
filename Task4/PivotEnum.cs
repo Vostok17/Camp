@@ -5,7 +5,6 @@
         FirstElement,
         LastElement,
         MiddleElement,
-        Random,
-        
+        Random
     }
 }
