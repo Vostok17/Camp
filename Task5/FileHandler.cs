@@ -17,7 +17,7 @@ namespace Task5
         {
             if (filename != null)
             {
-                // Relative path to project folder.
+                // Relative path to the project folder.
                 _dir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.ToString();
 
                 _path = Path.Combine(_dir, "assets", filename);
@@ -171,7 +171,7 @@ namespace Task5
 
                 // Skip non-digits.
                 char c;
-                while (!char.IsDigit(c = (char)_sr.Peek()) && !_sr.EndOfStream)
+                while (!char.IsDigit((char)_sr.Peek()) && !_sr.EndOfStream)
                 {
                     _sr.Read();
                 }
@@ -195,7 +195,7 @@ namespace Task5
                 _sr = new StreamReader(path);
                 IsDisposed = false;
 
-                // Read line with count of numbers.
+                // Skip line with count of numbers.
                 _sr.ReadLine();
             }
             public void Dispose()

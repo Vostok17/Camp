@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,16 +10,16 @@ namespace Task5
     internal class Pair
     {
         public int Number { get; set; }
-        public int Frequancy { get; set; }
+        public int Frequency { get; set; }
 
         public Pair(int number, int frequancy)
         {
             Number = number;
-            Frequancy = frequancy;
+            Frequency = frequancy;
         }
         public override string ToString()
         {
-            return $"<Key {Number}, Value {Frequancy}>";
+            return $"<Key {Number}, Value {Frequency}>";
         }
     }
 }

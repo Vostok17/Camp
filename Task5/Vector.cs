@@ -9,52 +9,73 @@ namespace Task5
     internal class Vector
     {
         private int[] _array;
+
         public int Lenght => _array.Length;
 
-        #region Ctors
-
-        public Vector(int[] arr)
-        {
-            _array = arr;
-        }
+        public Vector() { }
         public Vector(int n)
         {
             _array = new int[n];
         }
-        public Vector()
+        public Vector(int[] arr)
         {
-            _array = Array.Empty<int>();
+            _array = arr;
         }
-
-        #endregion
 
         public int this[int index]
         {
-            get => _array[index];
-            set => _array[index] = value;
+            get
+            {
+                if (index < 0 || index >= _array.Length)
+                    throw new IndexOutOfRangeException(
+                        "Index must be greater than or equal to zero and less than lenght.");
+                return _array[index];
+            }
+            set
+            {
+                if (index < 0 || index >= _array.Length)
+                    throw new IndexOutOfRangeException(
+                        "Index must be greater than or equal to zero and less than lenght.");
+                _array[index] = value;
+            }
         }
 
+        #region Object methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is Vector other)
+            {
+                return ToString() == other.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
         public override string ToString()
         {
             return string.Join(' ', _array);
         }
+
+        #endregion
 
         #region Methods
 
         public void RandomInitialization(int min, int max)
         {
             Random random = new Random();
-            for (int i = 0; i < _array?.Length; i++)
+            for (int i = 0; i < _array.Length; i++)
             {
                 _array[i] = random.Next(min, max);
             }
         }
-
         public void InitShuffle()
         {
             for (int i = 0; i < _array.Length; i++)
             {
-                _array[i] = i + 1;
+                _array[i] = i;
             }
             Random random = new Random();
             _array = _array.OrderBy(x => random.Next()).ToArray();
@@ -68,7 +89,6 @@ namespace Task5
 
             return res;
         }
-
         public bool IsPalindrome()
         {
             bool isPalindrom = true;
@@ -84,9 +104,9 @@ namespace Task5
         }
         public void Reverse()
         {
-            int lenght = _array.Length / 2;
+            int lenght = _array.Length;
 
-            for (int i = 0; i < lenght; i++)
+            for (int i = 0; i < lenght / 2; i++)
             {
                 (_array[i], _array[lenght - 1 - i]) = (_array[lenght - 1 - i], _array[i]);
             }
@@ -124,32 +144,101 @@ namespace Task5
 
         #region Sort
 
-        public static void QuickSort(Vector vec, int start, int end)
+        #region QuickSort and QuickSelect
+
+        public static void QuickSort(
+            Vector v, int start, int end, PivotEnum pivotEnum, OrderEnum orderEnum)
         {
-            if (start < end)
+            if (start >= end)
+                return;
+
+            int pivot = pivotEnum switch
             {
-                int pivotIdx = Partition(vec, start, end);
+                PivotEnum.LastElement => v[end],
+                PivotEnum.FirstElement => v[start],
+                PivotEnum.MiddleElement => v[(start + end) / 2],
+                PivotEnum.Random => v[new Random().Next(start, end + 1)],
+                PivotEnum.MedianOfThree => MedianOfThree(v, start, (end - start) / 2, end),
+                _ => throw new NotImplementedException("Invalid option in pivot enum.")
+            };
 
-                QuickSort(vec, start, pivotIdx - 1);
-                QuickSort(vec, pivotIdx + 1, end);
-            }
+            int order = orderEnum switch
+            {
+                OrderEnum.Descending => -1,
+                _ => 1
+            };
+
+            int l = start, r = end;
+
+            do
+            {
+                while (order * v[l] < order * pivot) l++;
+                while (order * v[r] > order * pivot) r--;
+
+                if (l <= r)
+                {
+                    (v[l], v[r]) = (v[r], v[l]);
+                    l++;
+                    r--;
+                }
+            } while (l <= r);
+
+            QuickSort(v, l, end, pivotEnum, orderEnum);
+            QuickSort(v, start, r, pivotEnum, orderEnum);
         }
-        private static int Partition(Vector vec, int start, int end)
-        {
-            int pivot = vec[end];
-            int i = start - 1;
 
+        private static int Partition(Vector v, int start, int end)
+        {
+            int pivot = v[end];
+            int i = start - 1;
             for (int j = start; j < end; j++)
             {
-                if (vec[j] < pivot)
+                if (v[j] < pivot)
                 {
-                    (vec[++i], vec[j]) = (vec[j], vec[i]);
+                    i++;
+                    (v[j], v[i]) = (v[i], v[j]);
                 }
             }
-            (vec[i + 1], vec[end]) = (vec[end], vec[i + 1]);
-
+            (v[i + 1], v[end]) = (v[end], v[i + 1]);
             return i + 1;
         }
+        private static int QuickSelect(Vector v, int start, int end, int k)
+        {
+            int idx = Partition(v, start, end);
+
+            if (idx == k)
+                return v[idx];
+            else if (idx < k)
+                return QuickSelect(v, idx + 1, end, k);
+            else
+                return QuickSelect(v, start, idx - 1, k);
+        }
+        public static int FindMedian(Vector v)
+        {
+            int length = v.Lenght;
+
+            if (length % 2 == 1)
+            {
+                return QuickSelect(v, 0, length - 1, length / 2);
+            }
+            else
+            {
+                int a = QuickSelect(v, 0, length - 1, length / 2);
+                int b = QuickSelect(v, 0, length - 1, length / 2 - 1);
+                return (a + b) / 2;
+            }
+        }
+        private static int MedianOfThree(Vector v, int first, int middle, int last)
+        {
+            int[] arr = new int[] { v[first], v[middle], v[last] };
+            Array.Sort(arr);
+
+            return arr[1];
+        }
+
+        #endregion
+
+        #region MergeSort
 
         public static void MergeSort(Vector vec, int l, int r)
         {
@@ -233,31 +322,41 @@ namespace Task5
             }
         }
 
-        public static void HeapSort(Vector v)
+        #endregion
+
+        #region HeapSort
+
+        public static void HeapSort(Vector v, OrderEnum orderEnum = OrderEnum.Ascending)
         {
             int n = v.Lenght;
 
             for (int i = n / 2 - 1; i >= 0; i--)
-                Heapify(v, n, i);
+                Heapify(v, n, i, orderEnum);
 
             for (int i = n - 1; i > 0; i--)
             {
                 // Move root to end.
                 (v[0], v[i]) = (v[i], v[0]);
 
-                Heapify(v, i, 0);
+                Heapify(v, i, 0, orderEnum);
             }
         }
-        private static void Heapify(Vector v, int n, int root)
+        private static void Heapify(Vector v, int n, int root, OrderEnum orderEnum)
         {
             int largest = root;
             int leftNode = 2 * root + 1;
             int rightNode = 2 * root + 2;
 
-            if (leftNode < n && v[leftNode] > v[largest])
+            int order = orderEnum switch
+            {
+                OrderEnum.Descending => -1,
+                _ => 1
+            };
+
+            if (leftNode < n && order * v[leftNode] > order * v[largest])
                 largest = leftNode;
 
-            if (rightNode < n && v[rightNode] > v[largest])
+            if (rightNode < n && order * v[rightNode] > order * v[largest])
                 largest = rightNode;
 
             if (largest != root)
@@ -265,9 +364,11 @@ namespace Task5
                 (v[largest], v[root]) = (v[root], v[largest]);
 
                 // Recursively update subtree.
-                Heapify(v, n, largest);
+                Heapify(v, n, largest, orderEnum);
             }
         }
+
+        #endregion
 
         #endregion
     }
