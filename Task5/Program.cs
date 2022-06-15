@@ -32,8 +32,8 @@ Console.WriteLine("Initial vector (from file):\n{0}\n", initialVector.ReadVector
 
 Vector.MergeSortWithFiles("vector.txt", 3);
 
+Console.WriteLine("Sorted vector (ExternalMergeSort):\n{0}\n", initialVector.ReadVector());
+
 #endregion
-
-
 
 Console.ReadKey();

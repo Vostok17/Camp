@@ -299,24 +299,21 @@ namespace Task5
                 idx++;
             }
         }
-        public static void MergeSortWithFiles(string filename, int numberOfChunks)
+        public static void MergeSortWithFiles(string filename, int numberOfChunks, bool descending = false)
         {
             var mainFile = new FileHandler(filename);
 
             List<string> files = mainFile.Split(numberOfChunks);
-            //Sort(file1);
-            //Sort(file2);
-            //mainFile.Dispose();
 
-            //mainFile.Merge(file1, file2);
+            foreach (string file in files)
+            {
+                var hf = new FileHandler(file);
+                Vector v = hf.ReadVector();
+                MergeSort(v, 0, v.Lenght - 1, descending);
+                hf.WriteVector(v);
+            }
 
-            //void Sort(string path)
-            //{
-            //    FileHandler hf = new FileHandler(path);
-            //    Vector v = hf.ReadVector();
-            //    MergeSort(v, 0, v.Lenght - 1);
-            //    hf.WriteVector(v);
-            //}
+            mainFile.Merge(files);
         }
 
         #endregion

@@ -50,7 +50,7 @@ namespace Task5
         public void WriteVector(Vector v)
         {
             // Close file iterator which operates on the same file.
-            if (!_iterator.IsDisposed)
+            if (_iterator != null && !_iterator.IsDisposed)
                 _iterator.Dispose();
 
             using (StreamWriter sw = new StreamWriter(_path))
@@ -98,46 +98,48 @@ namespace Task5
             {
                 sw.Dispose();
             }
-            _iterator.Dispose();
             return files;
         }
-        public void Merge(string file1, string file2)
+        public void Merge(List<string> files, bool descending = false)
         {
-            var fh1 = new FileHandler(file1);
-            var fh2 = new FileHandler(file2);
+            var fileHandlers = new List<FileHandler>();
 
-            int length = 0;// fh1.GetVectorLength() + fh2.GetVectorLength();
-
-            using (StreamWriter sw = new StreamWriter(_path))
+            foreach (string file in files)
             {
-                // Write the length of the vector
-                sw.WriteLine(length);
+                var fh = new FileHandler(file);
+                fh.OpenIterator();
+                fileHandlers.Add(fh);
+            }
 
-                int? a1 = fh1.ReadNext(), a2 = fh2.ReadNext();
+            var queue = new PriorityQueue<(FileHandler, int), int>();
+            foreach (FileHandler fh in fileHandlers)
+            {
+                AddToQueue(fh);
+            }
 
-                while (!fh1.IsDisposed && !fh2.IsDisposed)
+            using (StreamWriter mainFile = new StreamWriter(_path))
+            {
+                while (queue.Count > 0)
                 {
-                    if (a1 <= a2)
-                    {
-                        sw.Write(a1 + " ");
-                        a1 = fh1.ReadNext();
-                    }
-                    else
-                    {
-                        sw.Write(a2 + " ");
-                        a2 = fh2.ReadNext();
-                    }
+                    var (fh, numToWrite) = queue.Dequeue();
+                    mainFile.Write(numToWrite + " ");
+
+                    AddToQueue(fh);
                 }
+            }
 
-                while (!fh1.IsDisposed)
+            foreach (FileHandler fh in fileHandlers)
+            {
+                fh.Dispose();
+            }
+
+            void AddToQueue(FileHandler fh)
+            {
+                int? num = fh.ReadNext();
+                if (num != null)
                 {
-                    sw.Write(a1 + " ");
-                    a1 = fh1.ReadNext();
-                }
-                while (!fh2.IsDisposed)
-                {
-                    sw.Write(a2 + " ");
-                    a2 = fh2.ReadNext();
+                    int numToAdd = (int)num;
+                    queue.Enqueue((fh, numToAdd), numToAdd);
                 }
             }
         }
