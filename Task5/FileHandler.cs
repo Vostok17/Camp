@@ -8,11 +8,11 @@ namespace Task5
 {
     internal class FileHandler : IDisposable
     {
-        private string _path;
-        private string _dir;
+        private readonly string _path;
+        private readonly string _dir;
         private FileIterator _iterator;
 
-        public FileHandler() : this(null) { }
+        private FileHandler() { }
         public FileHandler(string filename)
         {
             if (filename != null)
@@ -21,25 +21,40 @@ namespace Task5
                 _dir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.ToString();
 
                 _path = Path.Combine(_dir, "assets", filename);
-                _iterator = new FileIterator(_path);
             }
         }
+
+        #region Object methods
 
         public override string ToString()
         {
             return $"Opetates on: {_path}";
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is FileHandler other)
+            {
+                return _path == other._path;
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return _path.GetHashCode();
+        }
+
+        #endregion
+
+        #region Methods
 
         public void WriteVector(Vector v)
         {
+            // Close file iterator which operates on the same file.
             if (!_iterator.IsDisposed)
                 _iterator.Dispose();
 
             using (StreamWriter sw = new StreamWriter(_path))
             {
-                // Write the length of the vector.
-                sw.WriteLine(v.Lenght);
-
                 sw.Write(string.Join(' ', v));
             }
         }
@@ -48,59 +63,50 @@ namespace Task5
             int[] arr;
             using (StreamReader sr = new StreamReader(_path))
             {
-                // Read the length of the vector.
-                int length = Convert.ToInt32(sr.ReadLine());
-
-                if (length == 0)
-                    return new Vector();
-
                 arr = sr.ReadLine().Trim().Split()
                 .Select(x => int.Parse(x))
                 .ToArray();
-
             }
             return new Vector(arr);
         }
-
-        public (string file1, string file2) Split()
+        public List<string> Split(int numberOfClusters)
         {
-            string file1 = Path.Combine(_dir, "assets", "arr1.txt"),
-                file2 = Path.Combine(_dir, "assets", "arr2.txt");
+            var files = new List<string>();
+            var streamWriters = new List<StreamWriter>();
 
-            int length;
-            using (StreamReader sr = new StreamReader(_path))
+            for (int i = 0; i < numberOfClusters; i++)
             {
-                length = Convert.ToInt32(sr.ReadLine());
+                string filePath = Path.Combine(_dir, "assets", $"arr{i}.txt");
+                files.Add(filePath);
+                streamWriters.Add(new StreamWriter(filePath));
             }
 
-            Write(file1, length / 2);
-            Write(file2, length - length / 2);
+            OpenIterator();
 
-            return (file1, file2);
-
-            void Write(string path, int length)
+            while (!_iterator.IsDisposed)
             {
-                using (StreamWriter sw = new StreamWriter(path))
+                foreach (StreamWriter sw in streamWriters)
                 {
-                    sw.WriteLine(length);
-                    for (int i = 0; i < length; i++)
-                    {
-                        int? num = ReadNext();
-                        if (num is null)
-                        {
-                            throw new Exception($"Invalid data in file: {path}");
-                        }
-                        sw.Write(num + " ");
-                    }
+                    int? num = ReadNext();
+                    if (num is null)
+                        break;
+                    sw.Write(num + " ");
                 }
             }
+
+            foreach (StreamWriter sw in streamWriters)
+            {
+                sw.Dispose();
+            }
+            _iterator.Dispose();
+            return files;
         }
         public void Merge(string file1, string file2)
         {
             var fh1 = new FileHandler(file1);
             var fh2 = new FileHandler(file2);
 
-            int length = fh1.GetVectorSize() + fh2.GetVectorSize();
+            int length = 0;// fh1.GetVectorLength() + fh2.GetVectorLength();
 
             using (StreamWriter sw = new StreamWriter(_path))
             {
@@ -135,33 +141,25 @@ namespace Task5
                 }
             }
         }
-
+        public void OpenIterator() => _iterator = new FileIterator(_path);
         public int? ReadNext() => _iterator.ReadNext();
-        public void Restart() => _iterator.Restart(_path);
         public bool IsDisposed => _iterator.IsDisposed;
-        public int GetVectorSize()
-        {
-            int size;
-            using (StreamReader sr = new StreamReader(_path))
-            {
-                size = Convert.ToInt32(sr.ReadLine());
-            }
-            return size;
-        }
-
         public void Dispose()
         {
             _iterator.Dispose();
         }
 
+        #endregion
+
         private class FileIterator : IDisposable
         {
             private StreamReader _sr;
-            public bool IsDisposed = false;
+            public bool IsDisposed = true;
 
+            private FileIterator() { }
             public FileIterator(string path)
             {
-                Restart(path);
+                Open(path);
             }
 
             public int? ReadNext()
@@ -190,13 +188,10 @@ namespace Task5
                 }
                 return Convert.ToInt32(buffer.ToString());
             }
-            public void Restart(string path)
+            public void Open(string path)
             {
                 _sr = new StreamReader(path);
                 IsDisposed = false;
-
-                // Skip line with count of numbers.
-                _sr.ReadLine();
             }
             public void Dispose()
             {

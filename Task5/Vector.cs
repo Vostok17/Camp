@@ -146,8 +146,8 @@ namespace Task5
 
         #region QuickSort and QuickSelect
 
-        public static void QuickSort(
-            Vector v, int start, int end, PivotEnum pivotEnum, OrderEnum orderEnum)
+        public static void QuickSort(Vector v, int start, int end, 
+            bool descending = false, PivotEnum pivotEnum = PivotEnum.Random)
         {
             if (start >= end)
                 return;
@@ -162,11 +162,7 @@ namespace Task5
                 _ => throw new NotImplementedException("Invalid option in pivot enum.")
             };
 
-            int order = orderEnum switch
-            {
-                OrderEnum.Descending => -1,
-                _ => 1
-            };
+            int order = descending ? -1 : 1;
 
             int l = start, r = end;
 
@@ -183,8 +179,8 @@ namespace Task5
                 }
             } while (l <= r);
 
-            QuickSort(v, l, end, pivotEnum, orderEnum);
-            QuickSort(v, start, r, pivotEnum, orderEnum);
+            QuickSort(v, l, end, descending, pivotEnum);
+            QuickSort(v, start, r, descending, pivotEnum);
         }
 
         private static int Partition(Vector v, int start, int end)
@@ -240,19 +236,19 @@ namespace Task5
 
         #region MergeSort
 
-        public static void MergeSort(Vector vec, int l, int r)
+        public static void MergeSort(Vector vec, int l, int r, bool descending = false)
         {
             if (l < r)
             {
                 int middlePoint = l + (r - l) / 2;
 
-                MergeSort(vec, l, middlePoint);
-                MergeSort(vec, middlePoint + 1, r);
+                MergeSort(vec, l, middlePoint, descending);
+                MergeSort(vec, middlePoint + 1, r, descending);
 
-                Merge(vec, l, middlePoint, r);
+                Merge(vec, l, middlePoint, r, descending);
             }
         }
-        private static void Merge(Vector vec, int l, int middlePoint, int r)
+        private static void Merge(Vector vec, int l, int middlePoint, int r, bool descending)
         {
             int sizeL = middlePoint - l + 1,
                 sizeR = r - middlePoint;
@@ -262,20 +258,21 @@ namespace Task5
 
 
             int i, j;
-            for (i = 0; i < sizeL; ++i)
+            for (i = 0; i < sizeL; i++)
                 tempL[i] = vec[l + i];
 
-            for (j = 0; j < sizeR; ++j)
+            for (j = 0; j < sizeR; j++)
                 tempR[j] = vec[middlePoint + 1 + j];
 
             i = 0;
             j = 0;
             int idx = l;
 
+            int order = descending ? -1 : 1;
 
             while (i < sizeL && j < sizeR)
             {
-                if (tempL[i] <= tempR[j])
+                if (order * tempL[i] <= order * tempR[j])
                 {
                     vec[idx] = tempL[i];
                     i++;
@@ -302,56 +299,52 @@ namespace Task5
                 idx++;
             }
         }
-        public static void MergeSortWithFiles(string filename)
+        public static void MergeSortWithFiles(string filename, int numberOfChunks)
         {
-            var fh = new FileHandler(filename);
+            var mainFile = new FileHandler(filename);
 
-            (string file1, string file2) = fh.Split();
-            Sort(file1);
-            Sort(file2);
-            fh.Dispose();
+            List<string> files = mainFile.Split(numberOfChunks);
+            //Sort(file1);
+            //Sort(file2);
+            //mainFile.Dispose();
 
-            fh.Merge(file1, file2);
+            //mainFile.Merge(file1, file2);
 
-            void Sort(string path)
-            {
-                FileHandler hf = new FileHandler(path);
-                Vector v = hf.ReadVector();
-                MergeSort(v, 0, v.Lenght - 1);
-                hf.WriteVector(v);
-            }
+            //void Sort(string path)
+            //{
+            //    FileHandler hf = new FileHandler(path);
+            //    Vector v = hf.ReadVector();
+            //    MergeSort(v, 0, v.Lenght - 1);
+            //    hf.WriteVector(v);
+            //}
         }
 
         #endregion
 
         #region HeapSort
 
-        public static void HeapSort(Vector v, OrderEnum orderEnum = OrderEnum.Ascending)
+        public static void HeapSort(Vector v, bool descending = false)
         {
             int n = v.Lenght;
 
             for (int i = n / 2 - 1; i >= 0; i--)
-                Heapify(v, n, i, orderEnum);
+                Heapify(v, n, i, descending);
 
             for (int i = n - 1; i > 0; i--)
             {
                 // Move root to end.
                 (v[0], v[i]) = (v[i], v[0]);
 
-                Heapify(v, i, 0, orderEnum);
+                Heapify(v, i, 0, descending);
             }
         }
-        private static void Heapify(Vector v, int n, int root, OrderEnum orderEnum)
+        private static void Heapify(Vector v, int n, int root, bool descending)
         {
             int largest = root;
             int leftNode = 2 * root + 1;
             int rightNode = 2 * root + 2;
 
-            int order = orderEnum switch
-            {
-                OrderEnum.Descending => -1,
-                _ => 1
-            };
+            int order = descending ? -1 : 1;
 
             if (leftNode < n && order * v[leftNode] > order * v[largest])
                 largest = leftNode;
@@ -364,7 +357,7 @@ namespace Task5
                 (v[largest], v[root]) = (v[root], v[largest]);
 
                 // Recursively update subtree.
-                Heapify(v, n, largest, orderEnum);
+                Heapify(v, n, largest, descending);
             }
         }
 
