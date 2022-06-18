@@ -139,7 +139,8 @@ namespace Task5
                 if (num != null)
                 {
                     int numToAdd = (int)num;
-                    queue.Enqueue((fh, numToAdd), numToAdd);
+                    int order = descending ? -1 : 1;
+                    queue.Enqueue((fh, numToAdd), order * numToAdd);
                 }
             }
         }
@@ -148,7 +149,8 @@ namespace Task5
         public bool IsDisposed => _iterator.IsDisposed;
         public void Dispose()
         {
-            _iterator.Dispose();
+            if (!_iterator.IsDisposed)
+                _iterator.Dispose();
         }
 
         #endregion
@@ -178,8 +180,7 @@ namespace Task5
 
                 if (_sr.EndOfStream)
                 {
-                    _sr.Dispose();
-                    IsDisposed = true;
+                    Dispose();
                     return null;
                 }
 
