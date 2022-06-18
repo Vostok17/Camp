@@ -26,14 +26,23 @@ Console.WriteLine("\nSorted vector (MergeSort):\n{0}\n", v);
 
 #region MergeSortWithFiles
 
-FileHandler initialVector = new FileHandler("vector.txt");
+try
+{
+    FileHandler initialVector = new FileHandler("vector.txt");
 
-Console.WriteLine("Initial vector (from file):\n{0}\n", initialVector.ReadVector());
+    Console.WriteLine("Initial vector (from file):\n{0}\n", initialVector.ReadVector());
 
-Vector.MergeSortWithFiles("vector.txt", 3, true);
+    Vector.MergeSortWithFiles("vector.txt", 3, true);
 
-Console.WriteLine("Sorted vector (ExternalMergeSort):\n{0}\n", initialVector.ReadVector());
+    Console.WriteLine("Sorted vector (ExternalMergeSort):\n{0}\n", initialVector.ReadVector());
+}
+catch (FileNotFoundException ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 #endregion
+
+
 
 Console.ReadKey();

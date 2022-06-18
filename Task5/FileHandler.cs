@@ -60,14 +60,19 @@ namespace Task5
         }
         public Vector ReadVector()
         {
-            int[] arr;
             using (StreamReader sr = new StreamReader(_path))
             {
-                arr = sr.ReadLine().Trim().Split()
-                .Select(x => int.Parse(x))
-                .ToArray();
+                string? line = sr.ReadLine();
+                if (line == null)
+                    return new Vector();
+
+                int[] arr = line.Trim().Split()
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Select(x => int.Parse(x))                 
+                    .ToArray();
+
+                return new Vector(arr);
             }
-            return new Vector(arr);
         }
         public List<string> Split(int numberOfClusters)
         {
@@ -100,7 +105,7 @@ namespace Task5
             }
             return files;
         }
-        public void Merge(List<string> files, bool descending = false)
+        public void Merge(List<string> files, IComparer<int>? comparer = null)
         {
             var fileHandlers = new List<FileHandler>();
 
@@ -111,7 +116,7 @@ namespace Task5
                 fileHandlers.Add(fh);
             }
 
-            var queue = new PriorityQueue<(FileHandler, int), int>();
+            var queue = new PriorityQueue<(FileHandler, int), int>(comparer);
             foreach (FileHandler fh in fileHandlers)
             {
                 AddToQueue(fh);
@@ -139,8 +144,7 @@ namespace Task5
                 if (num != null)
                 {
                     int numToAdd = (int)num;
-                    int order = descending ? -1 : 1;
-                    queue.Enqueue((fh, numToAdd), order * numToAdd);
+                    queue.Enqueue((fh, numToAdd), numToAdd);
                 }
             }
         }

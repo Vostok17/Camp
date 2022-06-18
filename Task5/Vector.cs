@@ -12,7 +12,10 @@ namespace Task5
 
         public int Lenght => _array.Length;
 
-        public Vector() { }
+        public Vector() 
+        {
+            _array = new int[0];
+        }
         public Vector(int n)
         {
             _array = new int[n];
@@ -146,7 +149,7 @@ namespace Task5
 
         #region QuickSort and QuickSelect
 
-        public static void QuickSort(Vector v, int start, int end, 
+        public static void QuickSort(Vector v, int start, int end,
             bool descending = false, PivotEnum pivotEnum = PivotEnum.Random)
         {
             if (start >= end)
@@ -313,7 +316,15 @@ namespace Task5
                 hf.WriteVector(v);
             }
 
-            mainFile.Merge(files, descending);
+            if (descending)
+                mainFile.Merge(files, new DescComparer());
+            else
+                mainFile.Merge(files);
+
+            foreach (string file in files)
+            {
+                File.Delete(file);
+            }
         }
 
         #endregion
@@ -362,7 +373,8 @@ namespace Task5
 
         #endregion
 
-        private class DescOrder : Comparer<int>
+        // It is recommended to derive from Comparer<T> instead of implementing IComparer<T>.
+        private class DescComparer : Comparer<int>
         {
             public override int Compare(int x, int y)
             {
