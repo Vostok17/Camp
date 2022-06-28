@@ -8,18 +8,30 @@ namespace Task6
 {
     internal class ElectricityMetering
     {
+        #region Fields
+
         private readonly string _filename;
         private readonly UI? _ui = new UI();
+
+        #endregion
+
+        #region Props
 
         public int Quarter { get; set; }
         public int FlatsCount { get; set; }
         public Flat[] Flats { get; set; }
+
+        #endregion
+
+        #region Ctors
 
         public ElectricityMetering() { }
         public ElectricityMetering(string filename)
         {
             _filename = filename;
         }
+
+        #endregion
 
         #region Object methods
 
@@ -50,6 +62,8 @@ namespace Task6
 
         #endregion
 
+        #region Methods
+
         public void FillData()
         {
             (FlatsCount, Quarter) = _ui.FillFisrtLine();
@@ -59,6 +73,27 @@ namespace Task6
             {
                 Flats[i] = _ui.FillFlatData(i + 1);
             }
+        }
+        public void EditFlat(int flatNumber)
+        {
+            Flat flat = _ui.FillFlatData(flatNumber);
+
+            // Add or replace flat.
+            int idx = Array.IndexOf(Flats, flat);
+            if (idx >= 0)
+            {
+                Flats[idx] = flat;
+            }
+        }
+        public void PrintFlat(int flatNumber)
+        {
+            var flat = from f in Flats
+                       where f.Number == flatNumber
+                       select f;
+
+            // Flat number is unique.
+            Flat resFlat = flat.First();
+            _ui.PrintFlat(resFlat);
         }
         public void SaveToJson()
         {
@@ -82,5 +117,7 @@ namespace Task6
                 Flats = em.Flats;
             }
         }
+
+        #endregion
     }
 }

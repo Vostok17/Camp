@@ -32,7 +32,7 @@ namespace Task6
         {
             if (obj is Flat other)
             {
-                return ToString() == other.ToString();
+                return Number == other.Number;
             }
             return false;
         }

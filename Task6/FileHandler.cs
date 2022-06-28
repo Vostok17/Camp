@@ -12,7 +12,7 @@ namespace Task6
         private string? _path;
 
         public FileHandler() { }
-        public FileHandler(string filename) 
+        public FileHandler(string filename)
         {
             if (filename != null)
             {
@@ -22,6 +22,17 @@ namespace Task6
                 _path = Path.Combine(dir, "assets", filename.Trim());
             }
         }
+
+        #region Object methods
+
+        public override string ToString()
+        {
+            return string.Format("Operates on: {0}", _path);
+        }
+
+        #endregion
+
+        #region Methods
 
         public void SaveToJson(ElectricityMetering em)
         {
@@ -36,7 +47,22 @@ namespace Task6
         {
             using (StreamWriter sw = new StreamWriter(_path))
             {
-                sw.Write(em);
+                sw.WriteLine("Quarter: {0}", em.Quarter);
+                sw.WriteLine("Number of flats: {0}", em.FlatsCount);
+
+                var rows = em.Flats.Select(x =>
+                    new
+                    {
+                        Number = x.Number,
+                        Owner = x.Owner,
+                        StartDate = x.StartDate.ToShortDateString(),
+                        StartValue = x.StartValue,
+                        EndDate = x.EndDate.ToShortDateString(),
+                        EndValue = x.EndValue
+                    }).ToArray();
+
+                Table table = new Table(rows);
+                sw.Write(table);
             }
         }
         public ElectricityMetering? Read()
@@ -49,5 +75,7 @@ namespace Task6
                 return em;
             }
         }
+
+        #endregion
     }
 }

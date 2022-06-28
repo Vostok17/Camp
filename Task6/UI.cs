@@ -19,6 +19,8 @@ namespace Task6
             _separatorLength = separatorLength;
         }
 
+        #region Methods
+
         public (int numOfFlats, int quarter) FillFisrtLine()
         {
             Console.WriteLine(new string('=', _separatorLength));
@@ -59,7 +61,7 @@ namespace Task6
 
                 Console.Write("Owner's surname: ");
                 ownerSurname = Console.ReadLine();
-                            
+
                 if (string.IsNullOrEmpty(ownerSurname))
                     throw new ArgumentException("Surname can't be empty.", nameof(ownerSurname));
 
@@ -96,6 +98,11 @@ namespace Task6
                 EndValue = endValue
             };
         }
+        public void PrintFlat(Flat flat)
+        {
+            Table table = new Table(new object[] { flat });
+            Console.WriteLine(table);
+        }
         private void Error(string msg)
         {
             Msg(msg, ConsoleColor.Red);
@@ -110,5 +117,7 @@ namespace Task6
             Console.WriteLine(msg);
             Console.ResetColor();
         }
+
+        #endregion
     }
 }
