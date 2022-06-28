@@ -9,9 +9,14 @@ namespace Task6
     internal class UI
     {
         private int _separatorLength;
-        public UI()
+
+        public UI() 
         {
             _separatorLength = 30;
+        }
+        public UI(int separatorLength)
+        {
+            _separatorLength = separatorLength;
         }
 
         public (int numOfFlats, int quarter) FillFisrtLine()
@@ -40,14 +45,13 @@ namespace Task6
             Console.WriteLine(new string('=', _separatorLength));
             return (numOfFlats, quarter);
         }
-
-        public void FillFlatData(int flatNum)
+        public Flat FillFlatData(int flatNum)
         {
             Console.WriteLine(new string('-', _separatorLength));
 
             string ownerSurname;
-            double initialValue, outputValue;
-            DateTime initialDate, outputDate;
+            double startValue, endValue;
+            DateTime startDate, endDate;
 
             try
             {
@@ -60,39 +64,49 @@ namespace Task6
                     throw new ArgumentException("Surname can't be empty.", nameof(ownerSurname));
 
                 Console.Write("Initial date (expected format dd.mm.yyyy): ");
-                initialDate = Validator.CheckDate(Console.ReadLine());
+                startDate = Validator.CheckDate(Console.ReadLine());
 
                 Console.Write("Initial value: ");
-                if (!double.TryParse(Console.ReadLine(), out initialValue))
-                    throw new ArgumentException("Invalid input for initial value.", nameof(initialValue));
+                if (!double.TryParse(Console.ReadLine(), out startValue))
+                    throw new ArgumentException("Invalid input for initial value.", nameof(startValue));
 
                 Console.Write("Output date (expected format dd.mm.yyyy): ");
-                outputDate = Validator.CheckDate(Console.ReadLine());
+                endDate = Validator.CheckDate(Console.ReadLine());
 
                 Console.Write("Output value: ");
-                if (!double.TryParse(Console.ReadLine(), out outputValue))
-                    throw new ArgumentException("Invalid input for output value.", nameof(outputValue));
+                if (!double.TryParse(Console.ReadLine(), out endValue))
+                    throw new ArgumentException("Invalid input for output value.", nameof(endValue));
 
-                Validator.CheckInputOutputValues(initialValue, outputValue);
+                Validator.CheckInputOutputValues(startValue, endValue);
             }
             catch (Exception ex)
             {
                 Error(ex.Message);
-                FillFlatData(flatNum);
+                return FillFlatData(flatNum);
             }
             Feedback("Done!");
-        }
 
+            return new Flat
+            {
+                Number = flatNum,
+                Owner = ownerSurname,
+                StartDate = startDate,
+                StartValue = startValue,
+                EndDate = endDate,
+                EndValue = endValue
+            };
+        }
         private void Error(string msg)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(msg);
-            Console.ResetColor();
+            Msg(msg, ConsoleColor.Red);
         }
-
         private void Feedback(string msg)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
+            Msg(msg, ConsoleColor.Green);
+        }
+        private void Msg(string msg, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
             Console.WriteLine(msg);
             Console.ResetColor();
         }
