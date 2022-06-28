@@ -1,0 +1,2 @@
+Quarter: 1, Number of Flats: 1.
+Number: 1, Owner: Harry, StartDate: 02.01.2022, StartValue: 12, EndDate: 02.02.2022, EndValue: 32.
