@@ -63,6 +63,8 @@ namespace Task6
 
                 Table table = new Table(rows);
                 sw.Write(table);
+
+                sw.WriteLine($"{(DateTime.Now - em.Flats[0].EndDate).Days} days ago.");
             }
         }
         public ElectricityMetering? Read()

@@ -117,6 +117,18 @@ namespace Task6
                 Flats = em.Flats;
             }
         }
+        public int FindFlatWithTheBiggestCost()
+        {
+            return Flats.OrderByDescending(x => x.EndValue - x.StartValue).First().Number;
+        }
+        public int[] FindFlatsWithoutElecticity()
+        {
+            var flatsNum = from f in Flats
+                        where f.EndValue - f.StartValue == 0
+                        select f.Number;
+
+            return flatsNum.ToArray();
+        }
 
         #endregion
     }
