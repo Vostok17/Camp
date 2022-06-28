@@ -8,22 +8,78 @@ namespace Task6
 {
     internal class ElectricityMetering
     {
-        private FileHandler _fh;
-        private UI _ui;
+        private readonly string _filename;
+        private readonly UI? _ui = new UI();
 
+        public int Quarter { get; set; }
+        public int FlatsCount { get; set; }
+        public Flat[] Flats { get; set; }
+
+        public ElectricityMetering() { }
         public ElectricityMetering(string filename)
         {
-            _fh = new FileHandler(filename);
-            _ui = new UI();
+            _filename = filename;
         }
 
-        public void Fill()
-        {
-            var (numOfFlats, quarter) = _ui.FillFisrtLine();
+        #region Object methods
 
-            for (int i = 0; i < numOfFlats; i++)
+        public override string ToString()
+        {
+            var res = new StringBuilder();
+            res.AppendFormat("Quarter: {0}, Number of Flats: {1}.", Quarter, FlatsCount);
+            res.AppendLine();
+
+            foreach (Flat flat in Flats)
             {
-                _ui.FillFlatData(i + 1);
+                res.AppendLine(flat.ToString());
+            }
+            return res.ToString();
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is ElectricityMetering other)
+            {
+                return ToString() == other.ToString();
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+
+        #endregion
+
+        public void FillData()
+        {
+            (FlatsCount, Quarter) = _ui.FillFisrtLine();
+            Flats = new Flat[FlatsCount];
+
+            for (int i = 0; i < FlatsCount; i++)
+            {
+                Flats[i] = _ui.FillFlatData(i + 1);
+            }
+        }
+        public void SaveToJson()
+        {
+            var fh = new FileHandler("data.json");
+            fh.SaveToJson(this);
+        }
+        public void SaveToFile()
+        {
+            var fh = new FileHandler(_filename);
+            fh.SaveToFile(this);
+        }
+        public void Read()
+        {
+            var fh = new FileHandler("data.json");
+
+            ElectricityMetering? em = fh.Read();
+            if (em != null)
+            {
+                Quarter = em.Quarter;
+                FlatsCount = em.FlatsCount;
+                Flats = em.Flats;
             }
         }
     }
