@@ -48,7 +48,7 @@ namespace Task6
                 _columnLengths = FormColumnsLengths(_values);
 
                 // Calculate separator length.
-                _separatorLength = CalculateSeparatorLength(_values, _legend);
+                _separatorLength = CalculateSeparatorLength(_columnLengths);
 
                 // Draw a table.
                 Draw();
@@ -79,31 +79,12 @@ namespace Task6
 
         #region Methods
 
-        private int CalculateSeparatorLength(string[,] values, string[] legend)
+        private int CalculateSeparatorLength(int[] columnLengths)
         {
-            // Find longest row.
-            int max = 0;
-            string buffer = "";
-            for (int i = 0; i < _rowsCount; i++)
-            {
-                for (int j = 0; j < legend.Length; j++)
-                {
-                    buffer += values[i, j];
-                }
-                max = Math.Max(max, buffer.Length);
-                buffer = "";
-            }
-            // Also check legend.
-            for (int i = 0; i < legend.Length; i++)
-            {
-                buffer += legend[i];
-            }
-            max = Math.Max(max, buffer.Length);
-
-            int borders = legend.Length + 1;
-            int totalOffset = _offset * 2 * (legend.Length);
-
-            return max + borders + totalOffset;
+            // Calculate max length.
+            int max = columnLengths.Sum();
+            int borders = columnLengths.Length + 1;
+            return max + borders;
         }
         private string[] FormLegend(object line)
         {
