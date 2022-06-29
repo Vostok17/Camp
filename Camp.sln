@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElecticityMetering", "Task6\ElecticityMetering\ElecticityMetering.csproj", "{B9AF5994-1AC1-403E-800B-465556815D47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task6.ElecticityMetering", "Task6\ElecticityMetering\Task6.ElecticityMetering.csproj", "{B9AF5994-1AC1-403E-800B-465556815D47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTextEditor", "TextEditor\SimpleTextEditor.csproj", "{01E00BBD-3EEC-4A61-B170-71D0C2733033}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task6.TextEditor", "TextEditor\Task6.TextEditor.csproj", "{01E00BBD-3EEC-4A61-B170-71D0C2733033}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
