@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Task6
+namespace Task6.ElecticityMetering
 {
     internal static class Validator
     {

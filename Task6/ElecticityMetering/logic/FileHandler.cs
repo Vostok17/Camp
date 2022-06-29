@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-namespace Task6
+namespace Task6.ElecticityMetering
 {
     internal class FileHandler
     {

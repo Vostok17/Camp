@@ -1,4 +1,4 @@
-﻿using Task6;
+﻿using Task6.ElecticityMetering;
 
 ElectricityMetering em = new ElectricityMetering("quarter.txt");
 
