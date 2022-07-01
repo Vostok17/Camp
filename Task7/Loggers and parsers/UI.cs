@@ -155,5 +155,10 @@ namespace Task7
                 return ChooseOption(options);
             }
         }
+        public string AskForFilename()
+        {
+            Console.Write("Please, enter the name of the file: ");
+            return Console.ReadLine();
+        }
     }
 }

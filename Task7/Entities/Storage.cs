@@ -32,6 +32,8 @@ namespace Task7
             }
         }
 
+        #region Methods
+
         public void AddProducts()
         {
             UI ui = new UI();
@@ -47,10 +49,10 @@ namespace Task7
                         _products[i] = (prod.Product, prod.Count + _products[i].Count);
                         isInStorage = true;
                     }
-                } 
+                }
                 if (!isInStorage)
                     _products.Add(prod);
-            }          
+            }
         }
         public void Remove(int productId, int countToRemove)
         {
@@ -85,6 +87,28 @@ namespace Task7
         {
             _products.ForEach(x => x.Product.ChangePrice(percentage));
         }
+
+        public void ReadFromFile()
+        {
+            UI ui = new UI();
+
+            bool isLoaded = false;
+            do
+            {
+                try
+                {
+                    string filename = ui.AskForFilename();
+                    _products = FileParser.Parse(filename);
+                    isLoaded = true;
+                }
+                catch (FileNotFoundException ex)
+                {
+                    Logger.Log(ex.Message);
+                }
+            } while (!isLoaded);
+        }
+
+        #endregion
 
         #region Object methods
 
