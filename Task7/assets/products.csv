@@ -1,0 +1,11 @@
+﻿Id;Name;Price;Weight;Grade (for meat);Type (for meat);Expiration term in days (for dairy product);Count
+1;Coca cola;19.5;0.6;;;;1
+2;Apple;34.25;1;;;;2
+3;Mutton;186;1;FirstGrade;Mutton;;3
+4;Milk;sdfsdf;1;;;12;4
+5;Sourcream;34;0.5;;;20;1
+6;Veal;165;1;SecondGrade;Veal;;2
+7;Banana ;26;0.75;;;;3
+8;water;12;1;;;;4
+9;chicken;120;1;FirstGrade;Chicken;;1
+10;cheese;100;0.33;;;50;2
