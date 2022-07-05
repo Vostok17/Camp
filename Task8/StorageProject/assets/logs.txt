@@ -1,0 +1,3 @@
+02.07.2022 0:16:03 - Could not find the file: 'C:\Users\gagar\source\repos\Camp\Task8\assets\sdf'.
+02.07.2022 0:16:05 - Could not find the file: 'C:\Users\gagar\source\repos\Camp\Task8\assets\sdfP'.
+02.07.2022 0:16:08 - Invalid data in line 4.
