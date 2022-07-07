@@ -1,0 +1,3 @@
+Bread - 20
+Meat - 180
+Cheese - 20

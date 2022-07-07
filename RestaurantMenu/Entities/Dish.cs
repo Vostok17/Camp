@@ -23,6 +23,7 @@ namespace RestaurantMenu.Entities
         public override string ToString()
         {
             var sb = new StringBuilder(Name);
+            sb.AppendLine();
             foreach (Ingredient ingredient in Ingredients)
             {
                 sb.AppendLine(ingredient.ToString());
