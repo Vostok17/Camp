@@ -10,7 +10,6 @@ namespace RestaurantMenu.Entities
     {
         public string Name { get; init; }
         public int Weight { get; init; }
-        public decimal Price { get; set; }
 
         public Ingredient() { }
         public Ingredient(string name, int weight)

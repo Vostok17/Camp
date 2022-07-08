@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestaurantMenu.UserDialog
+namespace RestaurantMenu.UserInfo
 {
-    internal static class UserInfo
+    internal static class UserDialog
     {
         public static string AskAboutTheCurrency()
         {
@@ -26,6 +26,15 @@ namespace RestaurantMenu.UserDialog
                 "2" => "€",
                 _ => throw new Exception("Invalid option.")
             };
+        }
+        public static string SetThePrice(string ingredient)
+        {
+            Console.WriteLine($"Please, set the price for {ingredient} in UAH: ");
+            return Console.ReadLine();
+        }
+        public static void Display(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }

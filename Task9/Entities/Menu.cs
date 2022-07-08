@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RestaurantMenu.Parsers;
-using RestaurantMenu.UserDialog;
+using RestaurantMenu.UserInfo;
 
 namespace RestaurantMenu.Entities
 {
@@ -55,7 +55,7 @@ namespace RestaurantMenu.Entities
 
         public void CalculateCost()
         {
-            string currency = UserInfo.AskAboutTheCurrency();
+            string currency = UserDialog.AskAboutTheCurrency();
             Dictionary<string, double> currencyDict = new CourseParser("Course.txt").Parse();
 
             double currencyVal = currencyDict.ContainsKey(currency) ? currencyDict[currency] : 1;
@@ -66,6 +66,8 @@ namespace RestaurantMenu.Entities
                 .SelectMany(d => d.Ingredients)
                 .GroupBy(i => i, (key, g) => (key.Name, Weight: g.Sum(x => x.Weight)));
 
+            HandleMismatch(ingredients.Select(i => i.Name).ToArray(), priceList);
+
             var ingredientsCost = from p in priceList
                                   join i in ingredients on p.Name equals i.Name
                                   select new
@@ -73,13 +75,35 @@ namespace RestaurantMenu.Entities
                                       p.Name,
                                       i.Weight,
                                       p.Price,
-                                      Cost = Math.Round(p.Price / currencyVal * (i.Weight / 1000d), 5)
+                                      Cost = p.Price / currencyVal * (i.Weight / 1000d)
                                   };
 
             string[] columnNames = { "Name", "Weight", "Price (UAH)", "Cost (" + currency + ")" };
             Table table = new Table(ingredientsCost.ToArray(), columnNames);
 
-            File.WriteAllText(@"../../../assets/Results.txt", table.ToString());
+            File.WriteAllText(@"../../../assets/Result.txt", table.ToString());
+        }
+        private void HandleMismatch(string[] ingredients, List<(string Name, int Price)> priceList)
+        {
+            var mismatch = ingredients.Except(priceList.Select(p => p.Name));
+
+            foreach (string ingredient in mismatch)
+            {
+                try
+                {
+                    throw new Exception($"No price for {ingredient}.");
+                }
+                catch (Exception ex)
+                {
+                    UserDialog.Display(ex.Message);
+                    if (!int.TryParse(UserDialog.SetThePrice(ingredient), out int price))
+                    {
+                        throw;
+                    }
+                    priceList.Add((ingredient, price));
+                    File.AppendAllText(@"../../../assets/Prices.txt", $"\n{ingredient} - {price}");
+                }               
+            }
         }
 
         #endregion
