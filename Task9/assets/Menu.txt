@@ -1,0 +1,9 @@
+Burger
+Bread, 150
+Meat, 100
+
+CheeseBurger
+Bread, 300
+Meat, 100
+Cheese, 150
+TestIngredient, 100
