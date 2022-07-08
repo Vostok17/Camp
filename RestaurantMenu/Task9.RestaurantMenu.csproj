@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="UserDialog\" />
+    <Folder Include="Logic\" />
   </ItemGroup>
 
 </Project>

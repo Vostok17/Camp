@@ -1,11 +1,10 @@
 ﻿using RestaurantMenu;
 using RestaurantMenu.Entities;
 using RestaurantMenu.Parsers;
+using System.Text;
 
 Menu menu = new MenuParser("Menu.txt").Parse();
 
-menu.DeterminePrices();
-
-Console.WriteLine(menu);
+menu.CalculateCost();
 
 Console.ReadKey();
