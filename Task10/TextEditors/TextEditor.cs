@@ -12,18 +12,30 @@ namespace Translater.TextEditors
     {
         private string _stream;
 
-        private TextEditor() { }
+        public TextEditor() { }
         public TextEditor(string stream)
         {
             _stream = stream;
         }
 
-        public void SplitIntoSentences()
+        public void Translate(string text, Dictionary<string, string> dict)
         {
-            string[] sentences = Regex.Split(_stream, @"(?<=[\.!\?])\s+");
+            var words = Regex.Matches(text, @"((\b[^\s]+\b)((?<=\.\w).)?)");
 
-            var file = new FileHandler("Result.txt");
-            file.Write(sentences);
+            foreach (var word in words)
+            {
+                try
+                {
+                    text = text.Replace(word.ToString(), dict[word.ToString()]);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            Console.WriteLine(text);
         }
+        public void Translate(Dictionary<string, string> dict) => Translate(_stream, dict);
     }
 }
