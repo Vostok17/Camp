@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Translater.FileHandlers;
+using Translater.Logs;
+using Translater.UserInfo;
 
 namespace Translater.TextEditors
 {
@@ -18,7 +20,7 @@ namespace Translater.TextEditors
             _stream = stream;
         }
 
-        public void Translate(string text, Dictionary<string, string> dict)
+        public string Translate(string text, Dictionary<string, string> dict, Func<string, string>? Fix = null)
         {
             var words = Regex.Matches(text, @"((\b[^\s]+\b)((?<=\.\w).)?)");
 
@@ -28,13 +30,20 @@ namespace Translater.TextEditors
                 {
                     text = text.Replace(word.ToString(), dict[word.ToString()]);
                 }
+                catch (KeyNotFoundException ex)
+                {
+                    Logger.Log(ex.Message);
+                    if (Fix is null)
+                        throw;
+                    else text = text.Replace(word.ToString(), Fix.Invoke($"Not in dictionary: {word}."));
+                }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Logger.Log(ex.Message);
+                    throw;
                 }
             }
-
-            Console.WriteLine(text);
+            return text;
         }
         public void Translate(Dictionary<string, string> dict) => Translate(_stream, dict);
     }
